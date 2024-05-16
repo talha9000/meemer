@@ -6,7 +6,10 @@ import Navbar from './component/Navbar';
 import Drawer from './component/Drawer';
 import PageLayout from './container/PageLayout';
 import Loader from './component/Loader';
- 
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
+
 const App = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
@@ -15,16 +18,20 @@ const App = () => {
   };
 
   return (
-    <>
-      <Navbar ButtonEvent={toggleDrawer} />
-      <Drawer toggleDrawer={isDrawerOpen} />
-      <Suspense fallback={<Loader/>}>
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/*" element={<PageLayout />} />
-        </Routes>
-      </Suspense>
-    </>
+    <div className="relative min-h-screen">
+      <QueryClientProvider client={queryClient}>
+        <Navbar ButtonEvent={toggleDrawer} />
+        <Drawer toggleDrawer={isDrawerOpen} />
+        <div className="pt-16 md:pt-20 lg:pt-24"> {/* Adjust top padding for content to avoid hiding behind navbar */}
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/*" element={<PageLayout />} />
+            </Routes>
+          </Suspense>
+        </div>
+      </QueryClientProvider>
+    </div>
   );
 };
 

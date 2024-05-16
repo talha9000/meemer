@@ -4,44 +4,62 @@ import CardView from './CardView';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { lazy,Suspense } from 'react';
 import UserLoader from '../component/UserLoader';
+import { useQuery } from 'react-query';
 const FetchData = () => {
-    const [data, setData] = useState([]);
+    const [curretData, setData] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
     const [loading,setLoading]=useState(false)
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true)
-                const result = await getCall("/get_files");
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             setLoading(true)
+    //             const result = await getCall("/get_files");
       
-                if (result.data && Array.isArray(result.data.image_files)) {
-                    setLoading(false)
-                    setData(result.data.image_files);
-                } else {
-                    console.error("Data received from the API is not in the expected format:", result.data);
-                    setLoading(false)
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                setLoading(false)
-            }
-        };
+    //             if (result.data && Array.isArray(result.data.image_files)) {
+    //                 setLoading(false)
+    //                 setData(result.data.image_files);
+    //             } else {
+    //                 console.error("Data received from the API is not in the expected format:", result.data);
+    //                 setLoading(false)
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //             setLoading(false)
+    //         }
+    //     };
 
-        fetchData();
-    }, []);
+    //     fetchData();
+    // }, []);
+    const getMeeme=async()=>{
+        const result = await getCall("/get_files"); 
+     
+        return result.data
+    }
+    const {data,isLoading }=useQuery('fetch-meeme',getMeeme)
 
+    useEffect(()=>{
+        setLoading(isLoading)
+        if (data && data.image_files) {
+            setData(data.image_files); // Set curretData to the image_files array
+           
+        }
+    },[data])
+   
     useEffect(() => {
         const fetchImageUrls = async () => {
             try {
-                const urls = await Promise.all(data.map(item => base64ToImage(item.image_content)));
+                setLoading(isLoading)
+                const urls = await Promise.all(curretData.map(item => base64ToImage(item.image_content)));
                 setImageUrls(urls);
             } catch (error) {
                 console.error("Error fetching image URLs:", error);
             }
         };
-
+    
         fetchImageUrls();
-    }, [data]);
+    }, [curretData]);
+    
 
     async function base64ToImage(base64String) {
         return new Promise((resolve, reject) => {
@@ -61,11 +79,11 @@ const FetchData = () => {
     return (
  <>
        <UserLoader isLoading={loading}/>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ml-5 mt-44 pr-43">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-5 mt-10 lg:mx-20">
             
             {imageUrls.map((url, ind) => (
                 
-                <CardView key={ind} impath={url} title={data[ind].title} description={data[ind].description}/>
+                <CardView key={ind} impath={url} title={curretData[ind].title} description={curretData[ind].description}/>
             ))}
            
         </div>

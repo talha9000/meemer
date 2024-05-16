@@ -11,15 +11,16 @@ const UploadMeeme = () => {
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    setNumFiles(imageFiles.length);
-    setSelectedFiles(imageFiles);
-    // Initialize form data for each image file
-    const formDataArray = imageFiles.map(file => ({ file, title: '', description: '' }));
+    const mediaFiles = files.filter(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
+    setNumFiles(mediaFiles.length);
+    setSelectedFiles(mediaFiles);
+    
+    // Initialize form data for each media file
+    const formDataArray = mediaFiles.map(file => ({ file, title: '', description: '' }));
     console.log('FormData array:', formDataArray); // Log formData here
     setFormData(formDataArray);
   };
-  
+   
   
   const handleTitleChange = (index, event) => {
     const updatedFormData = [...formData];

@@ -31,7 +31,7 @@ const Drawer = ({ toggleDrawer }) => {
             {routes.map((route, index) => (
               // you can use routes.name for defaut naem fetch form file
              // <li key={index}><NavLink to={route.path}>{route.name}</NavLink></li>
-              <li key={index}><NavLink to={route.path}> {name[index]}</NavLink></li>
+              <li key={index}><NavLink to={route.path}> {route.name}</NavLink></li>
             ))}
             
             {/* Footer */}
